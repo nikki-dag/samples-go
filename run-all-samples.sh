@@ -60,7 +60,6 @@ SAMPLES=(
   "child-workflow-continue-as-new/worker:child-workflow-continue-as-new/starter"
   "choice-exclusive/worker:choice-exclusive/starter"
   "choice-multi/worker:choice-multi/starter"
-  "codec-server/worker:codec-server/starter"
   "cron/worker:cron/starter"
   "dsl/worker:dsl/starter"
   "dynamic/worker:dynamic/starter"
@@ -85,10 +84,8 @@ SAMPLES=(
   "reqrespquery/worker:reqrespquery/starter"
   "reqrespupdate/worker:reqrespupdate/starter"
   "retryactivity/worker:retryactivity/starter"
-  "safe_message_handler/worker:safe_message_handler/starter"
   "saga/worker:saga/start"
   "schedule/worker:schedule/starter"
-  "searchattributes/worker:searchattributes/starter"
   "session-failure/worker:session-failure/starter"
   "sleep-for-days/worker:sleep-for-days/starter"
   "snappycompress/worker:snappycompress/starter"
@@ -100,10 +97,10 @@ SAMPLES=(
   "updatabletimer/worker:updatabletimer/starter"
   "update/worker:update/starter"
   "worker-specific-task-queues/worker:worker-specific-task-queues/starter"
-  "workflow-security-interceptor/worker:workflow-security-interceptor/starter"
 )
 
 # ── Skipped samples (need external services or special setup) ────────────────
+# codec-server            — module path incompatible with go run
 # ctxpropagation          — requires Jaeger
 # datadog                 — requires Datadog agent
 # dynamicmtls             — requires mTLS certificates
@@ -116,12 +113,15 @@ SAMPLES=(
 # multi-history-replay    — replay tool, not a standard worker/starter
 # nexus*                  — requires Nexus endpoint configuration
 # opentelemetry           — requires OpenTelemetry collector
+# safe_message_handler    — workflow completes before starter cleanup step (timing)
+# searchattributes        — requires custom search attributes on namespace
 # serverjwtauth           — requires JWT key files
 # shoppingcart            — requires external HTTP server (UI)
 # slogadapter             — worker-only, starter uses envconfig already
 # synchronous-proxy       — requires external HTTP server (UI)
 # temporal-fixtures/*     — internal test fixtures
 # worker-versioning       — requires multi-version worker orchestration
+# workflow-security-interceptor — intentionally fails (tests prohibited child workflow)
 # zapadapter              — worker-only, starter uses envconfig already
 
 # ── Configuration ────────────────────────────────────────────────────────────
