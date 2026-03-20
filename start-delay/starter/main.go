@@ -21,8 +21,8 @@ func main() {
 	workflowOptions := client.StartWorkflowOptions{
 		ID:        "startdelay_" + uuid.New(),
 		TaskQueue: "startdelay",
-		// The first workflow task will be dispatched in 5 minutes
-		StartDelay: 5 * time.Minute,
+		// The first workflow task will be dispatched after StartDelay
+		StartDelay: 10 * time.Second,
 	}
 
 	we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, "StartDelayWorkflow", "from a delayed workflow")

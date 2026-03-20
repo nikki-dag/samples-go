@@ -132,7 +132,7 @@ SAMPLES=(
 # cron, safe_message_handler). We use a timeout so the script doesn't stall.
 # A starter that launches the workflow successfully but times out waiting for
 # completion is still counted as PASS — the workflow was started.
-STARTER_TIMEOUT=${STARTER_TIMEOUT:-360}  # seconds (6 minutes, needed for start-delay's 5min StartDelay)
+STARTER_TIMEOUT=${STARTER_TIMEOUT:-30}  # seconds
 
 # ── Run ──────────────────────────────────────────────────────────────────────
 PASSED=0
