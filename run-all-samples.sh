@@ -73,7 +73,7 @@ SAMPLES=(
   "pickfirst/worker:pickfirst/starter"
   "pso/worker:pso/starter"
   "query/worker:query/starter:query/query"
-  "recovery/worker:recovery/starter"
+  "recovery/worker:recovery/starter:recovery/signal"
   "reqrespactivity/worker:reqrespactivity/starter:reqrespactivity/request"
   "reqrespquery/worker:reqrespquery/starter:reqrespquery/request"
   "reqrespupdate/worker:reqrespupdate/starter:reqrespupdate/request"
