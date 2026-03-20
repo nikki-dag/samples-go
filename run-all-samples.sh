@@ -74,9 +74,9 @@ SAMPLES=(
   "pso/worker:pso/starter"
   "query/worker:query/starter:query/query"
   "recovery/worker:recovery/starter"
-  "reqrespactivity/worker:reqrespactivity/starter"
-  "reqrespquery/worker:reqrespquery/starter"
-  "reqrespupdate/worker:reqrespupdate/starter"
+  "reqrespactivity/worker:reqrespactivity/starter:reqrespactivity/request"
+  "reqrespquery/worker:reqrespquery/starter:reqrespquery/request"
+  "reqrespupdate/worker:reqrespupdate/starter:reqrespupdate/request"
   "retryactivity/worker:retryactivity/starter"
   "saga/worker:saga/start"
   "schedule/worker:schedule/starter"
@@ -88,7 +88,7 @@ SAMPLES=(
   "update/worker:update/starter"
   "worker-specific-task-queues/worker:worker-specific-task-queues/starter"
   "batch-sliding-window/worker:batch-sliding-window/starter"
-  "cancellation/worker:cancellation/starter"
+  "cancellation/worker:cancellation/starter:cancellation/cancel -wid workflowID-to-cancel"
 
   # ── Slow samples (long timers, signals, or start delays — run last) ──
   "await-signals/worker:await-signals/starter"
@@ -97,7 +97,7 @@ SAMPLES=(
   "polling/infrequent/worker:polling/infrequent/starter"
   "polling/periodic_sequence/worker:polling/periodic_sequence/starter"
   "timer/worker:timer/starter"
-  "updatabletimer/worker:updatabletimer/starter"
+  "updatabletimer/worker:updatabletimer/starter:updatabletimer/updater"
   "sleep-for-days/worker:sleep-for-days/starter"
   "start-delay/worker:start-delay/starter"
 )
@@ -213,10 +213,26 @@ run_sample() {
   fi
 
   # Run extra command if specified (e.g. query/query after query/starter)
+  # Format: "path args..." — first word is the go run path, rest are arguments
   if [[ -n "$extra_cmd" && ($exit_code -eq 0 || $exit_code -eq 124) ]]; then
-    echo "  Running extra: $extra_cmd..."
+    local extra_path extra_args
+    extra_path="${extra_cmd%% *}"
+    extra_args="${extra_cmd#* }"
+    [[ "$extra_args" == "$extra_cmd" ]] && extra_args=""
+    echo "  Running extra: $extra_cmd (timeout ${STARTER_TIMEOUT}s)..."
     local extra_log="$LOG_DIR/${sample_name//\//_}_extra.log"
-    go run "./$extra_cmd" > "$extra_log" 2>&1 || true
+    # Run with timeout (same as starter) since some extras loop forever
+    go run "./$extra_path" $extra_args > "$extra_log" 2>&1 &
+    local extra_pid=$!
+    local extra_waited=0
+    while kill -0 "$extra_pid" 2>/dev/null && [[ $extra_waited -lt $STARTER_TIMEOUT ]]; do
+      sleep 1
+      extra_waited=$((extra_waited + 1))
+    done
+    if kill -0 "$extra_pid" 2>/dev/null; then
+      kill "$extra_pid" 2>/dev/null || true
+      wait "$extra_pid" 2>/dev/null || true
+    fi
   fi
 
   # Stop this worker before moving to the next sample
