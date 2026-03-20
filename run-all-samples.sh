@@ -51,16 +51,13 @@ trap cleanup EXIT INT TERM
 # ── Samples with standard worker/starter layout ─────────────────────────────
 # Each entry is "worker_path:starter_path"
 SAMPLES=(
+  # ── Fast samples (complete quickly) ──
   "helloworld/worker:helloworld/starter"
-  "await-signals/worker:await-signals/starter"
-  "batch-sliding-window/worker:batch-sliding-window/starter"
   "branch/worker:branch/starter"
-  "cancellation/worker:cancellation/starter"
   "child-workflow/worker:child-workflow/starter"
   "child-workflow-continue-as-new/worker:child-workflow-continue-as-new/starter"
   "choice-exclusive/worker:choice-exclusive/starter"
   "choice-multi/worker:choice-multi/starter"
-  "cron/worker:cron/starter"
   "dsl/worker:dsl/starter"
   "dynamic/worker:dynamic/starter"
   "dynamic-workflows/worker:dynamic-workflows/starter"
@@ -74,9 +71,6 @@ SAMPLES=(
   "memo/worker:memo/starter"
   "mutex/worker:mutex/starter"
   "pickfirst/worker:pickfirst/starter"
-  "polling/frequent/worker:polling/frequent/starter"
-  "polling/infrequent/worker:polling/infrequent/starter"
-  "polling/periodic_sequence/worker:polling/periodic_sequence/starter"
   "pso/worker:pso/starter"
   "query/worker:query/starter"
   "recovery/worker:recovery/starter"
@@ -87,16 +81,25 @@ SAMPLES=(
   "saga/worker:saga/start"
   "schedule/worker:schedule/starter"
   "session-failure/worker:session-failure/starter"
-  "sleep-for-days/worker:sleep-for-days/starter"
   "snappycompress/worker:snappycompress/starter"
   "splitmerge-future/worker:splitmerge-future/starter"
   "splitmerge-selector/worker:splitmerge-selector/starter"
   "standalone-activity/helloworld/worker:standalone-activity/helloworld/starter"
-  "start-delay/worker:start-delay/starter"
-  "timer/worker:timer/starter"
-  "updatabletimer/worker:updatabletimer/starter"
   "update/worker:update/starter"
   "worker-specific-task-queues/worker:worker-specific-task-queues/starter"
+  "batch-sliding-window/worker:batch-sliding-window/starter"
+  "cancellation/worker:cancellation/starter"
+
+  # ── Slow samples (long timers, signals, or start delays — run last) ──
+  "await-signals/worker:await-signals/starter"
+  "cron/worker:cron/starter"
+  "polling/frequent/worker:polling/frequent/starter"
+  "polling/infrequent/worker:polling/infrequent/starter"
+  "polling/periodic_sequence/worker:polling/periodic_sequence/starter"
+  "timer/worker:timer/starter"
+  "updatabletimer/worker:updatabletimer/starter"
+  "sleep-for-days/worker:sleep-for-days/starter"
+  "start-delay/worker:start-delay/starter"
 )
 
 # ── Skipped samples (need external services or special setup) ────────────────
@@ -129,7 +132,7 @@ SAMPLES=(
 # cron, safe_message_handler). We use a timeout so the script doesn't stall.
 # A starter that launches the workflow successfully but times out waiting for
 # completion is still counted as PASS — the workflow was started.
-STARTER_TIMEOUT=${STARTER_TIMEOUT:-30}  # seconds
+STARTER_TIMEOUT=${STARTER_TIMEOUT:-360}  # seconds (6 minutes, needed for start-delay's 5min StartDelay)
 
 # ── Run ──────────────────────────────────────────────────────────────────────
 PASSED=0
