@@ -72,7 +72,7 @@ SAMPLES=(
   "mutex/worker:mutex/starter"
   "pickfirst/worker:pickfirst/starter"
   "pso/worker:pso/starter"
-  "query/worker:query/starter"
+  "query/worker:query/starter:query/query"
   "recovery/worker:recovery/starter"
   "reqrespactivity/worker:reqrespactivity/starter"
   "reqrespquery/worker:reqrespquery/starter"
@@ -143,6 +143,7 @@ FAILURES=()
 run_sample() {
   local worker_path="$1"
   local starter_path="$2"
+  local extra_cmd="${3:-}"
   local sample_name="${worker_path%%/worker*}"
 
   echo "--- [$sample_name] Starting worker..."
@@ -211,6 +212,13 @@ run_sample() {
     FAILURES+=("$sample_name")
   fi
 
+  # Run extra command if specified (e.g. query/query after query/starter)
+  if [[ -n "$extra_cmd" && ($exit_code -eq 0 || $exit_code -eq 124) ]]; then
+    echo "  Running extra: $extra_cmd..."
+    local extra_log="$LOG_DIR/${sample_name//\//_}_extra.log"
+    go run "./$extra_cmd" > "$extra_log" 2>&1 || true
+  fi
+
   # Stop this worker before moving to the next sample
   if kill -0 "$worker_pid" 2>/dev/null; then
     kill "$worker_pid" 2>/dev/null || true
@@ -222,9 +230,8 @@ echo "=== Running ${#SAMPLES[@]} samples ==="
 echo ""
 
 for entry in "${SAMPLES[@]}"; do
-  worker_path="${entry%%:*}"
-  starter_path="${entry##*:}"
-  run_sample "$worker_path" "$starter_path"
+  IFS=':' read -r worker_path starter_path extra_cmd <<< "$entry"
+  run_sample "$worker_path" "$starter_path" "$extra_cmd"
   echo ""
 done
 
