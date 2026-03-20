@@ -6,15 +6,16 @@ import (
 
 	"github.com/temporalio/samples-go/snappycompress"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 func main() {
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		// Set DataConverter here to ensure that workflow inputs and results are
-		// compressed as required.
-		DataConverter: snappycompress.AlwaysCompressDataConverter,
-	})
+	opts := envconfig.MustLoadDefaultClientOptions()
+	// Set DataConverter here to ensure that workflow inputs and results are
+	// compressed as required.
+	opts.DataConverter = snappycompress.AlwaysCompressDataConverter
+	c, err := client.Dial(opts)
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -29,7 +30,7 @@ func main() {
 	we, err := c.ExecuteWorkflow(
 		context.Background(),
 		workflowOptions,
-		snappycompress.Workflow,
+		"SnappyCompressWorkflow",
 		"My Compressed Friend",
 	)
 	if err != nil {

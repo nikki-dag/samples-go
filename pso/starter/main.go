@@ -7,6 +7,7 @@ import (
 
 	"github.com/pborman/uuid"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 
 	"github.com/temporalio/samples-go/pso"
 )
@@ -17,10 +18,9 @@ func main() {
 	flag.Parse()
 
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		HostPort:      client.DefaultHostPort,
-		DataConverter: pso.NewJSONDataConverter(),
-	})
+	opts := envconfig.MustLoadDefaultClientOptions()
+	opts.DataConverter = pso.NewJSONDataConverter()
+	c, err := client.Dial(opts)
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

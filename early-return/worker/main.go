@@ -7,6 +7,7 @@ import (
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/contrib/envconfig"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 
 	w := worker.New(c, earlyreturn.TaskQueueName, worker.Options{})
 
-	w.RegisterWorkflow(earlyreturn.Workflow)
+	w.RegisterWorkflowWithOptions(earlyreturn.Workflow, workflow.RegisterOptions{Name: "EarlyReturnWorkflow"})
 	w.RegisterActivity(earlyreturn.CompleteTransaction)
 	w.RegisterActivity(earlyreturn.CancelTransaction)
 

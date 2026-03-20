@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 // @@@SNIPSTART samples-go-cancellation-cancel-workflow-execution-trigger
@@ -20,9 +21,7 @@ func main() {
 	}
 
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

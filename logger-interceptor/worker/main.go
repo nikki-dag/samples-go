@@ -34,7 +34,7 @@ func main() {
 		})},
 	})
 
-	w.RegisterWorkflow(logger_interceptor.Workflow)
+	w.RegisterWorkflowWithOptions(logger_interceptor.Workflow, workflow.RegisterOptions{Name: "LoggerInterceptorWorkflow"})
 	w.RegisterActivity(logger_interceptor.Activity)
 
 	err = w.Run(worker.InterruptCh())

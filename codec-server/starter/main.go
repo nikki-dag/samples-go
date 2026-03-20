@@ -6,15 +6,16 @@ import (
 
 	codecserver "github.com/temporalio/samples-go/codec-server"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 func main() {
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		// Set DataConverter here to ensure that workflow inputs and results are
-		// encoded as required.
-		DataConverter: codecserver.DataConverter,
-	})
+	opts := envconfig.MustLoadDefaultClientOptions()
+	// Set DataConverter here to ensure that workflow inputs and results are
+	// encoded as required.
+	opts.DataConverter = codecserver.DataConverter
+	c, err := client.Dial(opts)
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -29,7 +30,7 @@ func main() {
 	we, err := c.ExecuteWorkflow(
 		context.Background(),
 		workflowOptions,
-		codecserver.Workflow,
+		"CodecServerWorkflow",
 		"Plain text input",
 	)
 	if err != nil {

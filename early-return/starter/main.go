@@ -31,7 +31,7 @@ func main() {
 		// Here we use FAIL, because we do not expect this workflow ID to exist already,
 		// and so we want an error if itdoes.
 		WorkflowIDConflictPolicy: enumspb.WORKFLOW_ID_CONFLICT_POLICY_FAIL,
-	}, earlyreturn.Workflow, txRequest)
+	}, "EarlyReturnWorkflow", txRequest)
 
 	updateOptions := client.UpdateWorkflowOptions{
 		UpdateName:   earlyreturn.UpdateName,

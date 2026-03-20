@@ -8,6 +8,7 @@ import (
 	"go.temporal.io/sdk/contrib/envconfig"
 	sdkinterceptor "go.temporal.io/sdk/interceptor"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	w := worker.New(c, "security-interceptor", worker.Options{
 		Interceptors: []sdkinterceptor.WorkerInterceptor{securityinterceptor.NewWorkerInterceptor()},
 	})
-	w.RegisterWorkflow(securityinterceptor.Workflow)
+	w.RegisterWorkflowWithOptions(securityinterceptor.Workflow, workflow.RegisterOptions{Name: "SecurityInterceptorWorkflow"})
 	w.RegisterWorkflow(securityinterceptor.ChildWorkflow)
 	w.RegisterWorkflow(securityinterceptor.ProhibitedChildWorkflow)
 	// Activity used by the interceptor

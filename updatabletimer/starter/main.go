@@ -7,13 +7,12 @@ import (
 	"time"
 
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 // Starts updatable timer workflow with initial wake-up time in 30 seconds.
 func main() {
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -25,7 +24,7 @@ func main() {
 	}
 
 	wakeUpTime := time.Now().Add(30 * time.Second)
-	we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, updatabletimer.Workflow, wakeUpTime)
+	we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, "UpdatableTimerWorkflow", wakeUpTime)
 	if err != nil {
 		log.Fatalln("Unable to start workflow", err)
 	}

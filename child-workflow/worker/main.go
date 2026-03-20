@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 	"go.temporal.io/sdk/worker"
 
 	child_workflow "github.com/temporalio/samples-go/child-workflow"
@@ -12,9 +13,7 @@ import (
 // @@@SNIPSTART samples-go-child-workflow-example-worker-starter
 func main() {
 	// The client is a heavyweight object that should be created only once per process.
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

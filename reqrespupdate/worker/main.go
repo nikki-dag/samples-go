@@ -5,13 +5,13 @@ import (
 
 	"github.com/temporalio/samples-go/reqrespupdate"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -19,7 +19,7 @@ func main() {
 
 	w := worker.New(c, "reqrespupdate", worker.Options{})
 
-	w.RegisterWorkflow(reqrespupdate.UppercaseWorkflow)
+	w.RegisterWorkflowWithOptions(reqrespupdate.UppercaseWorkflow, workflow.RegisterOptions{Name: "ReqRespUpdateUppercaseWorkflow"})
 	w.RegisterActivity(reqrespupdate.UppercaseActivity)
 
 	err = w.Run(worker.InterruptCh())

@@ -6,15 +6,13 @@ import (
 	"time"
 
 	"github.com/pborman/uuid"
-	"github.com/temporalio/samples-go/helloworld"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 func main() {
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -27,7 +25,7 @@ func main() {
 		StartDelay: 5 * time.Minute,
 	}
 
-	we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, helloworld.Workflow, "from a delayed workflow")
+	we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, "StartDelayWorkflow", "from a delayed workflow")
 	if err != nil {
 		log.Fatalln("Unable to execute workflow", err)
 	}

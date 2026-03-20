@@ -6,6 +6,7 @@ import (
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/contrib/envconfig"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 
 	"github.com/temporalio/samples-go/helloworld"
 )
@@ -20,7 +21,7 @@ func main() {
 
 	w := worker.New(c, "hello-world", worker.Options{})
 
-	w.RegisterWorkflow(helloworld.Workflow)
+	w.RegisterWorkflowWithOptions(helloworld.Workflow, workflow.RegisterOptions{Name: "HelloWorldWorkflow"})
 	w.RegisterActivity(helloworld.Activity)
 
 	err = w.Run(worker.InterruptCh())

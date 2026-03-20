@@ -6,15 +6,14 @@ import (
 
 	"github.com/pborman/uuid"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 
 	choice_multi "github.com/temporalio/samples-go/choice-multi"
 )
 
 func main() {
 	// The client is a heavyweight object that should be created once per process.
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

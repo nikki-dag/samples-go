@@ -11,6 +11,7 @@ import (
 
 	"github.com/temporalio/samples-go/reqrespactivity"
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 )
 
 func main() {
@@ -20,9 +21,7 @@ func main() {
 
 	// Create client
 	var err error
-	opts.Client, err = client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	opts.Client, err = client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}

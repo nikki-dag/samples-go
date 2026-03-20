@@ -5,14 +5,14 @@ import (
 	"log"
 
 	"go.temporal.io/sdk/client"
+	"go.temporal.io/sdk/contrib/envconfig"
 	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
 	// The client and worker are heavyweight objects that should be created once per process.
-	c, err := client.Dial(client.Options{
-		HostPort: client.DefaultHostPort,
-	})
+	c, err := client.Dial(envconfig.MustLoadDefaultClientOptions())
 	if err != nil {
 		log.Fatalln("Unable to create client", err)
 	}
@@ -20,7 +20,7 @@ func main() {
 
 	w := worker.New(c, updatabletimer.TaskQueue, worker.Options{})
 
-	w.RegisterWorkflow(updatabletimer.Workflow)
+	w.RegisterWorkflowWithOptions(updatabletimer.Workflow, workflow.RegisterOptions{Name: "UpdatableTimerWorkflow"})
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
